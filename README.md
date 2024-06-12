@@ -36,23 +36,24 @@ Para mejorar la precisión del reconocimiento de residuos, se pueden seguir los 
 ### Configuración del entorno de desarrollo local
 
 1. Clona el repositorio:
-
-```git clone https://github.com/JoelSanti/recycling_app.git
+```
+git clone https://github.com/JoelSanti/recycling_app.git
+```
 
 2. Navega al directorio del proyecto:
-
-```cd recycling_app
-
+```
+cd recycling_app
+```
 3. Instala las dependencias:
-
-```flutter pub get
-
+```
+flutter pub get
+```
 4. Asegúrate de tener un dispositivo emulado (o un dispositivo físico conectado) para ejecutar la aplicación.
 
 5. Ejecuta la aplicación:
-
-```flutter run
-
+```
+flutter run
+```
 ### Scripts disponibles
 
 En el directorio del proyecto, puedes ejecutar:

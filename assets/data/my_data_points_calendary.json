@@ -1,0 +1,103 @@
+{
+  "Sectores": [
+    {
+      "id_sector": 1,
+      "nombre_sector": "Pillco Marca "
+    },
+    {
+      "id_sector": 2,
+      "nombre_sector": "Amarilis"
+    },
+    {
+      "id_sector": 3,
+      "nombre_sector": "Cayhuayna"
+    },
+    {
+      "id_sector": 4,
+      "nombre_sector": "Colectora"
+    },
+    {
+      "id_sector": 5,
+      "nombre_sector": "San Luís"
+    }
+  ],
+  "Puntos_Reciclaje": [
+    {
+      "id_punto": 1,
+      "nombre_punto": "Punto 1",
+      "direccion": "Cayhuayna",
+      "latitud": -9.9460213,
+      "longitud": -76.251659,
+      "id_sector": 1
+    },
+    {
+      "id_punto": 2,
+      "nombre_punto": "Punto 2",
+      "direccion": "Pillco Marca",
+      "latitud": -9.960482,
+      "longitud": -76.248696,
+      "id_sector": 2
+    },
+    {
+      "id_punto": 3,
+      "nombre_punto": "Punto 3",
+      "direccion": "Colectora",
+      "latitud": -9.917573,
+      "longitud": -76.2297597,
+      "id_sector": 3
+    },
+    {
+      "id_punto": 4,
+      "nombre_punto": "Punto 4",
+      "direccion": "Amarilis",
+      "latitud": -9.939936,
+      "longitud": -76.2413167,
+      "id_sector": 4
+    },
+    {
+      "id_punto": 5,
+      "nombre_punto": "Punto 5",
+      "direccion": "San Luis",
+      "latitud": -9.9402411,
+      "longitud": -76.2382996,
+      "id_sector": 5
+    }
+  ],
+  "Calendario_Recoleccion": [
+    {
+      "id_recoleccion": 1,
+      "fecha": "2024-06-19",
+      "hora_inicio": "08:00",
+      "hora_fin": "12:00",
+      "id_sector": 1
+    },
+    {
+      "id_recoleccion": 2,
+      "fecha": "2024-06-24",
+      "hora_inicio": "08:00",
+      "hora_fin": "12:00",
+      "id_sector": 2
+    },
+    {
+      "id_recoleccion": 3,
+      "fecha": "2024-06-28",
+      "hora_inicio": "08:00",
+      "hora_fin": "12:00",
+      "id_sector": 3
+    },
+    {
+      "id_recoleccion": 4,
+      "fecha": "2024-06-30",
+      "hora_inicio": "08:00",
+      "hora_fin": "12:00",
+      "id_sector": 4
+    },
+    {
+      "id_recoleccion": 5,
+      "fecha": "2024-07-05",
+      "hora_inicio": "08:00",
+      "hora_fin": "12:00",
+      "id_sector": 5
+    }
+  ]
+}

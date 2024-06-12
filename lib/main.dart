@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:recycling_app/constants/app_constants.dart';
-import 'package:recycling_app/controllers/image_provider.dart';
-import 'package:recycling_app/controllers/jobs_provider.dart';
-import 'package:recycling_app/controllers/login_provider.dart';
+
 import 'package:recycling_app/controllers/map_provider.dart';
 
 import 'package:recycling_app/controllers/onboarding_provider.dart';
-import 'package:recycling_app/controllers/profile_provider.dart';
-import 'package:recycling_app/controllers/signup_provider.dart';
+
 import 'package:recycling_app/controllers/zoom_provider.dart';
 import 'package:recycling_app/views/routes/pages.dart';
 import 'package:recycling_app/views/routes/routes.dart';

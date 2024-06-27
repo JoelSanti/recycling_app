@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:recycling_app/constants/app_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'dart:collection';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+
 
 class Event {
   final DateTime date;
@@ -50,21 +53,27 @@ class _SchedulingPageState extends State<SchedulingPage> {
   List<DateTime> _markedDays = [];
 
   Future<List<Event>> loadEvents() async {
-    String jsonString = await rootBundle.loadString('assets/data/my_data_points_calendary.json');
-    Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    final response = await http.get(Uri.parse('$API_URL/calendars'));
 
-    List<Event> events = [];
-    for (var recoleccion in jsonData['Calendario_Recoleccion']) {
-      DateTime date = DateTime.parse(recoleccion['fecha']);
-      String title = 'Reciclaje';
-      String location = jsonData['Puntos_Reciclaje'].firstWhere((punto) => punto['id_punto'] == recoleccion['id_sector'])['nombre_punto'];
-      String sector = jsonData['Sectores'].firstWhere((sector) => sector['id_sector'] == recoleccion['id_sector'])['nombre_sector'];
-      String startTime = recoleccion['hora_inicio'] ?? 'No se proporcionó la hora de inicio';
-      String endTime = recoleccion['hora_fin'] ?? 'No se proporcionó la hora de finalización';
-      events.add(Event(date, title, location, sector, startTime, endTime));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<dynamic> recolecciones = jsonData['docs'];
+
+      List<Event> events = [];
+      for (var recoleccion in recolecciones) {
+        DateTime date = DateTime.parse(recoleccion['fecha']);
+        String title = 'Reciclaje';
+        String location = 'Ubicación desconocida'; // Actualiza esto si la API proporciona información de ubicación
+        String sector = recoleccion['id_sector']['nombre_sector'];
+        String startTime = recoleccion['hora_inicio'];
+        String endTime = recoleccion['hora_fin'];
+        events.add(Event(date, title, location, sector, startTime, endTime));
+      }
+
+      return events;
+    } else {
+      throw Exception('Failed to load events from API');
     }
-
-    return events;
   }
 
   @override
@@ -132,20 +141,20 @@ class _SchedulingPageState extends State<SchedulingPage> {
                       decoration: const BoxDecoration(
                         border: Border(
                           left: BorderSide(
-                            color: Colors.red, // Cambia esto al color que quieras para el borde izquierdo
-                            width: 5.0, // Cambia esto al ancho que quieras para el borde izquierdo
+                            color: Colors.red,
+                            width: 5.0,
                           ),
                           top: BorderSide(
-                            color: Colors.grey, // Cambia esto al color que quieras para el resto de los bordes
-                            width: 1.0, // Cambia esto al ancho que quieras para el resto de los bordes
+                            color: Colors.grey,
+                            width: 1.0,
                           ),
                           right: BorderSide(
-                            color: Colors.grey, // Cambia esto al color que quieras para el resto de los bordes
-                            width: 1.0, // Cambia esto al ancho que quieras para el resto de los bordes
+                            color: Colors.grey,
+                            width: 1.0,
                           ),
                           bottom: BorderSide(
-                            color: Colors.grey, // Cambia esto al color que quieras para el resto de los bordes
-                            width: 1.0, // Cambia esto al ancho que quieras para el resto de los bordes
+                            color: Colors.grey,
+                            width: 1.0,
                           ),
                         ),
                       ),

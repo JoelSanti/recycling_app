@@ -39,3 +39,7 @@ List<String> skills = [
 ];
 
 List<String> profile = [];
+
+// constants.dart
+
+const String API_URL = 'https://servidor-recycling.onrender.com/api';

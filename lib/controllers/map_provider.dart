@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:recycling_app/constants/app_constants.dart';
 import 'package:recycling_app/helpers/image_to_bytes.dart';
+import 'package:http/http.dart' as http;
 
 class MapNotifier extends ChangeNotifier {
   Position? _initialPosition ;
@@ -55,20 +57,30 @@ class MapNotifier extends ChangeNotifier {
   }
 
   Future<void> _addInitialMarkers() async {
-    String jsonString = await rootBundle.loadString('assets/data/my_data_points_calendary.json');
-    Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    final response = await http.get(Uri.parse('$API_URL/map_points'));
 
-    final customIcon = BitmapDescriptor.fromBytes(
-        await imageToBytes('assets/images/position_icon.png'));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<dynamic> puntos = jsonData['docs'];
 
-    for (var punto in jsonData['Puntos_Reciclaje']) {
-      LatLng position = LatLng(punto['latitud'], punto['longitud']);
-      Marker marker = Marker(
-        markerId: MarkerId('marker${punto['id_punto']}'),
-        position: position,
-        icon: customIcon,
-      );
-      addMarker(marker);
+      final customIcon = BitmapDescriptor.fromBytes(
+          await imageToBytes('assets/images/position_icon.png'));
+
+      for (var punto in puntos) {
+        LatLng position = LatLng(punto['latitud'], punto['longitud']);
+        Marker marker = Marker(
+          markerId: MarkerId('marker${punto['id']}'),
+          position: position,
+          icon: customIcon,
+          infoWindow: InfoWindow(
+            title: punto['nombre_punto'],
+            snippet: punto['direccion'],
+          ),
+        );
+        addMarker(marker);
+      }
+    } else {
+      throw Exception('Failed to load markers from API');
     }
   }
 

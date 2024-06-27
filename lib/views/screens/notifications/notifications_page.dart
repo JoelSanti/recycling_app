@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:recycling_app/constants/app_constants.dart';
 
 class NotificationItem {
   NotificationItem({
@@ -25,7 +27,7 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   late Future<List<NotificationItem>> _notifications;
   int _daysBefore = 3;
-  int _selectedSector = 1;
+  String _selectedSector = '';
   late Future<List<dynamic>> _sectorsFuture;
   List<dynamic> _sectors = [];
 
@@ -37,10 +39,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<List<dynamic>> loadSectors() async {
-    String jsonString = await rootBundle.loadString('assets/data/my_data_points_calendary.json');
-    Map<String, dynamic> jsonData = jsonDecode(jsonString);
-    _sectors = jsonData['Sectores'];
-    return _sectors;
+    final response = await http
+        .get(Uri.parse('$API_URL/sectors'));
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+      _sectors = jsonData['docs'];
+      if (_sectors.isNotEmpty) {
+        _selectedSector = _sectors[0]
+            ['id']; // Set _selectedSector to the id of the first sector
+      }
+      return _sectors;
+    } else {
+      throw Exception('Failed to load sectors from API');
+    }
   }
 
   @override
@@ -52,7 +65,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: TextField(
               onChanged: (value) {
                 setState(() {
@@ -74,18 +88,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    return DropdownButton<int>(
+                    return DropdownButton<String>(
                       isExpanded: true,
                       value: _selectedSector,
-                      onChanged: (int? newValue) {
+                      onChanged: (String? newValue) {
                         setState(() {
                           _selectedSector = newValue!;
                           _notifications = generateNotifications();
                         });
                       },
-                      items: snapshot.data!.map<DropdownMenuItem<int>>((sector) {
-                        return DropdownMenuItem<int>(
-                          value: sector['id_sector'],
+                      items: snapshot.data!
+                          .map<DropdownMenuItem<String>>((sector) {
+                        return DropdownMenuItem<String>(
+                          value: sector['id'],
                           child: Text('Sector ${sector['nombre_sector']}'),
                         );
                       }).toList(),
@@ -109,7 +124,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         child: ListTile(
                           title: Text(snapshot.data![index].title),
                           subtitle: Text(snapshot.data![index].description),
-                          trailing: Text(formatDateTime(snapshot.data![index].date)),
+                          trailing:
+                              Text(formatDateTime(snapshot.data![index].date)),
                         ),
                       );
                     },
@@ -119,7 +135,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 }
 
                 // By default, show a loading spinner.
-                return const CircularProgressIndicator();
+                return const SizedBox();
               },
             ),
           ),
@@ -129,40 +145,39 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<List<NotificationItem>> generateNotifications() async {
-    String jsonString = await rootBundle.loadString('assets/data/my_data_points_calendary.json');
-    Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    final response = await http.get(Uri.parse('$API_URL/calendars'));
 
-    List<NotificationItem> notifications = [];
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<dynamic> recolecciones = jsonData['docs'];
 
-    for (var recoleccion in jsonData['Calendario_Recoleccion']) {
-      if (recoleccion['id_sector'] == _selectedSector) {
-        DateTime date = DateTime.parse(recoleccion['fecha']);
-        var now = DateTime.now();
-        var difference = now.difference(date);
+      List<NotificationItem> notifications = [];
 
-        if (difference.inDays.abs() <= _daysBefore) {
-          // Get the sector name from the _sectors list
-          var sector = _sectors.firstWhere((sector) => sector['id_sector'] == _selectedSector);
-          String sectorName = sector['nombre_sector'];
+      for (var recoleccion in recolecciones) {
+        if (recoleccion['id_sector']['id'] == _selectedSector) {
+          DateTime date = DateTime.parse(recoleccion['fecha']);
+          var now = DateTime.now();
+          var difference = now.difference(date);
 
-          String title = 'Recolección en Sector $sectorName';
-          // Parse the original date string to a DateTime object
-          DateTime parsedDate = DateTime.parse(recoleccion['fecha']);
+          if (difference.inDays.abs() <= _daysBefore) {
+            String sectorName = recoleccion['id_sector']['nombre_sector'];
 
-// Create a new DateFormat for the desired format (day, month, year)
-          DateFormat newFormat = DateFormat('dd/MM/yyyy');
+            String title = 'Recolección en el Sector $sectorName';
+            DateTime parsedDate = DateTime.parse(recoleccion['fecha']);
+            DateFormat newFormat = DateFormat('dd/MM/yyyy');
+            String formattedDate = newFormat.format(parsedDate);
 
-// Use the new DateFormat to format the parsed date
-          String formattedDate = newFormat.format(parsedDate);
+            String description = 'La recolección será el $formattedDate de ${recoleccion['hora_inicio']} a ${recoleccion['hora_fin']}';
 
-          String description = 'La recolección será el $formattedDate de ${recoleccion['hora_inicio']} a ${recoleccion['hora_fin']}';
-
-          notifications.add(NotificationItem(title: title, description: description, date: date));
+            notifications.add(NotificationItem(title: title, description: description, date: date));
+          }
         }
       }
-    }
 
-    return notifications;
+      return notifications;
+    } else {
+      throw Exception('Failed to load notifications from API');
+    }
   }
 
   String formatDateTime(DateTime dt) {

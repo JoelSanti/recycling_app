@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:recycling_app/constants/app_constants.dart';
 import 'package:recycling_app/views/common/exports.dart';
 
-import 'package:recycling_app/views/screens/auth/profilepage.dart';
+//import 'package:recycling_app/views/screens/auth/profilepage.dart';
 import 'package:recycling_app/views/screens/awareness/awareness_page.dart';
 import 'package:recycling_app/views/screens/home/homepage.dart';
 
@@ -26,7 +26,6 @@ class _MainscreenState extends State<Mainscreen> {
     const SchedulingPage(),
     const AwarenessPage(),
     const NotificationsPage(),
-
   ];
 
   void onTabTapped(int index) {
@@ -68,7 +67,6 @@ class _MainscreenState extends State<Mainscreen> {
             icon: Icon(Icons.notifications),
             label: 'Notificacion',
           ),
-
         ],
       ),
     );

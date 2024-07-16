@@ -26,9 +26,12 @@ class PageThree extends StatelessWidget {
             const SizedBox(
               height: 80,
             ),
-            Image.asset("assets/images/page3.png"),
+            Padding(
+              padding: EdgeInsets.all(20.0), // Ajusta el valor según tus necesidades
+              child: Image.asset("assets/images/page3.jpg"),
+            ),
             const SizedBox(
-              height: 30,
+              height: 40,
             ),
             Text("Contribuye al Planeta",
                 textAlign: TextAlign.center,

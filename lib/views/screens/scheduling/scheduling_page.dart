@@ -101,7 +101,13 @@ class _SchedulingPageState extends State<SchedulingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendario de recolección'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Calendario de recolección' , style: TextStyle(fontSize: 19)),
+            Image.asset('assets/images/logo_huanuco.png', height: 25),
+          ],
+        ),
       ),
       body: Center(
         child: Column(

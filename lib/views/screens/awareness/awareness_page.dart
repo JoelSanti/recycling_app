@@ -27,7 +27,13 @@ class _AwarenessPageState extends State<AwarenessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manual de sensibilización'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+             const Text('Manual de sensibilización', style: TextStyle(fontSize: 19)),
+            Image.asset('assets/images/logo_huanuco.png', height: 25),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0), // Add padding here

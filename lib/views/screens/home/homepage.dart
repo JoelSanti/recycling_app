@@ -14,7 +14,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reconocimiento de Residuos'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('R.Residuos ', style: TextStyle(fontSize: 19)),
+            Image.asset('assets/images/logo_huanuco.png', height: 25),
+          ],
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

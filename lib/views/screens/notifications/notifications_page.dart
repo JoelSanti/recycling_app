@@ -60,7 +60,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificaciones'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Notificaciones', style: TextStyle(fontSize: 19)),
+            Image.asset('assets/images/logo_huanuco.png', height: 25),
+          ],
+        ),
       ),
       body: Column(
         children: [

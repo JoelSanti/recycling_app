@@ -16,7 +16,13 @@ class _RecyclingPointsState extends State<RecyclingPoints> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Puntos de reciclaje')
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Puntos de reciclaje', style: TextStyle(fontSize: 19)),
+            Image.asset('assets/images/logo_huanuco.png', height: 25),
+          ],
+        ),
       ),
       body: Selector<MapNotifier, bool>(
           selector: (_, notifier) => notifier.loading,

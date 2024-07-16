@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
                Locale('es', ''), // Español
             ],
             debugShowCheckedModeBanner: false,
-            title: 'Recycling App',
+            title: 'EcoHuánuco',
             theme: ThemeData(
               useMaterial3: true,
               colorSchemeSeed: Colors.green,

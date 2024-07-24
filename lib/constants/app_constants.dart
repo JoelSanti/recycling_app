@@ -42,4 +42,4 @@ List<String> profile = [];
 
 // constants.dart
 
-const String API_URL = 'https://servidor-recycling.onrender.com/api';
+const String API_URL = 'https://servidor-recycling-8szz.onrender.com/api';

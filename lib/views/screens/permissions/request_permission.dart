@@ -53,8 +53,8 @@ class _RequestPermissionState extends State<RequestPermission>
                       ]));
 
           break;
-          case PermissionStatus.denied:
-        break;
+        case PermissionStatus.denied:
+          break;
         case PermissionStatus.restricted:
           break;
         case PermissionStatus.limited:
@@ -95,7 +95,7 @@ class _RequestPermissionState extends State<RequestPermission>
   }
 
   void goToHome() {
-    Navigator.pushReplacementNamed(context, Routes.mainScreenRoute);
+    Navigator.pushReplacementNamed(context, Routes.onboardingRoute);
   }
 
   @override

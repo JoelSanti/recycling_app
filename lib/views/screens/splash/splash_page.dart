@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:recycling_app/models/response/auth/auth_model.dart';
 import 'package:recycling_app/views/screens/splash/splash_controller.dart';
 
 class SplashPage extends StatefulWidget {
@@ -10,20 +12,20 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final _controller = SplashController(Permission.locationWhenInUse);
+  late final SplashController _controller;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.checkPermission();
-    });
-
+    final authModel = Provider.of<AuthModel>(context, listen: false);
+    _controller = SplashController(Permission.locationWhenInUse, authModel);
     _controller.addListener(() {
       if (_controller.routeName != null) {
         Navigator.pushReplacementNamed(context, _controller.routeName!);
       }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.checkPermission();
     });
   }
 

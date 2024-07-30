@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-
 import 'package:recycling_app/views/common/custom_outline_btn.dart';
-
 import 'package:recycling_app/views/common/exports.dart';
 import 'package:recycling_app/views/routes/routes.dart';
-
-
 
 class PageThree extends StatelessWidget {
   const PageThree({super.key});
@@ -27,7 +22,8 @@ class PageThree extends StatelessWidget {
               height: 80,
             ),
             Padding(
-              padding: EdgeInsets.all(20.0), // Ajusta el valor según tus necesidades
+              padding:
+                  EdgeInsets.all(20.0), // Ajusta el valor según tus necesidades
               child: Image.asset("assets/images/page3.jpg"),
             ),
             const SizedBox(
@@ -51,12 +47,23 @@ class PageThree extends StatelessWidget {
             ),
             CustomOutlineBtn(
                 onTap: () {
-                  Get.toNamed(Routes.mainScreenRoute);
+                  Get.offNamed(Routes.loginRoute);
                 },
                 hieght: hieght * 0.05,
                 width: width * 0.8,
-                text: 'Continuar',
+                text: 'Iniciar Sesión',
                 color: Color(kLight.value)),
+            const SizedBox(
+              height: 15,
+            ),
+            CustomOutlineBtn(
+                onTap: () {
+                  Get.offNamed(Routes.registerRoute);
+                },
+                hieght: hieght * 0.05,
+                width: width * 0.8,
+                text: 'Registrarse',
+                color: Color(KLightGreen.value)),
           ],
         ),
       ),

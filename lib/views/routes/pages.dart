@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recycling_app/views/routes/routes.dart';
+import 'package:recycling_app/views/screens/auth/login_screen.dart';
+import 'package:recycling_app/views/screens/auth/register_screen.dart';
 import 'package:recycling_app/views/screens/home/homepage.dart';
 import 'package:recycling_app/views/screens/mainscreen.dart';
 import 'package:recycling_app/views/screens/map/recycling_points.dart';
@@ -15,5 +17,7 @@ Map<String, Widget Function(BuildContext)> appRoutes() {
     Routes.recognitionRoute: (context) => const HomePage(),
     Routes.locationRoute: (context) => const RecyclingPoints(),
     Routes.onboardingRoute: (context) => const OnboardingScreen(),
+    Routes.loginRoute: (context) => LoginPage(),
+    Routes.registerRoute: (context) => RegisterPage(),
   };
 }

@@ -34,7 +34,7 @@ Widget buildPieChart(Map<String, int> data) {
         titleStyle: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
-            color: const Color(0xffffffff)),
+            color: const Color(0xffbbdab5)),
       ),
     );
 

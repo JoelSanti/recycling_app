@@ -15,6 +15,9 @@ class AuthModel extends ChangeNotifier {
   String? _token;
   String? _routeName;
   bool _isAuthenticated = false;
+  String? _role; // Nueva variable para almacenar el rol del usuario
+
+  String? get role => _role; // Getter para el rol del usuario
 
   String? get userId => _userId;
   String? get routeName => _routeName;
@@ -39,6 +42,7 @@ class AuthModel extends ChangeNotifier {
         final responseBody = jsonDecode(response.body);
         _token = responseBody['token'];
         _userId = responseBody['user']['id'];
+        _role = responseBody['user']['role'];
         print('Token: $_token');
         _isAuthenticated = true;
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -55,12 +59,12 @@ class AuthModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> register(
-    String firstName,
-    String lastName,
-    String email,
-    String password,
-  ) async {
+  Future<String> register(
+      String firstName,
+      String lastName,
+      String email,
+      String password,
+      ) async {
     try {
       final urlServidor = API_URL + '/users';
       final response = await http.post(
@@ -73,7 +77,7 @@ class AuthModel extends ChangeNotifier {
           'role': 'resident', // Or 'admin', depending on the user
         },
       );
-
+      print(' Status  --------------------------------------- ${response.statusCode}');
       if (response.statusCode == 201) {
         _firstName = firstName;
         _lastName = lastName;
@@ -82,13 +86,15 @@ class AuthModel extends ChangeNotifier {
         _routeName = Routes.loginRoute;
         _isAuthenticated = true;
         notifyListeners();
-        return true;
+        return 'Usuario registrado con éxito';
+      } else if (response.statusCode == 400) {
+        return 'El usuario ya existe';
       } else {
-        throw Exception('Failed to register user');
+        return 'Fallo al registrar el usuario';
       }
     } catch (e) {
       print('Error: $e');
-      return false;
+      return 'Error: $e';
     }
   }
 
@@ -124,6 +130,8 @@ class AuthModel extends ChangeNotifier {
         _token = token;
         final responseBody = jsonDecode(response.body);
         _userId = responseBody['user']['id'];
+        _role = responseBody['user']['role'];
+
       } else {
         // Si el servidor devuelve una respuesta de error, el token no es válido
         _isAuthenticated = false;

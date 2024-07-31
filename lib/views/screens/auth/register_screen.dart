@@ -110,21 +110,30 @@ class RegisterPage extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
-                          bool success = await authModel.register(
+                          String result = await authModel.register(
                             _firstNameController.text,
                             _lastNameController.text,
                             _emailController.text,
                             _passwordController.text,
                           );
-                          if (success) {
-                            // Replace the current screen with the main screen
+                          if (result == 'Usuario registrado con éxito') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(result),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            await Future.delayed(Duration(seconds: 2));
                             Navigator.of(context)
                                 .pushReplacementNamed(Routes.mainScreenRoute);
                           } else {
                             // Handle registration failure
                             // For example, show a Snackbar with an error message
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Registration failed')),
+                              SnackBar(
+                                  content: Text(result),backgroundColor: Colors.red,
+                              ),
+
                             );
                           }
                         }

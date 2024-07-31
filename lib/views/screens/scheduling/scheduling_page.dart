@@ -53,7 +53,7 @@ class _SchedulingPageState extends State<SchedulingPage> {
   List<DateTime> _markedDays = [];
 
   Future<List<Event>> loadEvents() async {
-    final response = await http.get(Uri.parse('$API_URL/calendars'));
+    final response = await http.get(Uri.parse('$API_URL/calendars?limit=500'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);

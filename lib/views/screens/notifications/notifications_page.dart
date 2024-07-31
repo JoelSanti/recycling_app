@@ -40,7 +40,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   Future<List<dynamic>> loadSectors() async {
     final response = await http
-        .get(Uri.parse('$API_URL/sectors'));
+        .get(Uri.parse('$API_URL/sectors?limit=500'));
     print("Response: ${response.body}");
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);
@@ -151,7 +151,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<List<NotificationItem>> generateNotifications() async {
-    final response = await http.get(Uri.parse('$API_URL/calendars'));
+    final response = await http.get(Uri.parse('$API_URL/calendars?limit=500'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);

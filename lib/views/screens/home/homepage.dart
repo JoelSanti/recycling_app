@@ -22,12 +22,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final role = Provider.of<AuthModel>(context).role;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('R.Residuos ', style: TextStyle(fontSize: 19)),
+            Text(role == 'admin' ? 'Estadísticas de capturas' : 'R.Residuos', style: TextStyle(fontSize: 19)),
             ElevatedButton(
               onPressed: () {
                 // Call the logout method from AuthModel
@@ -50,10 +51,12 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 5.h,
                 ),
+                if (role == 'resident') ...[
                 UserImagePicker(),
                 SizedBox(
                   height: 20.h,
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
@@ -133,6 +136,47 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+              ] else if (role == 'admin') ...[
+                  FutureBuilder(
+                    future: fetchScansAdmin(context),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        if (snapshot.data != null) {
+                          Map<String, dynamic> data = snapshot.data!;
+                          return Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Text('Comparación de tipos de residuos',
+                                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                width: 400, // Ajusta este valor según tus necesidades
+                                height: 360, // Ajusta este valor según tus necesidades
+                                child: buildPieChart(data['counts']),
+                              ),
+
+                              Text('Frecuencia semanal de escaneos', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                              SizedBox(height: 10),
+                              Container(
+                                width: 200, // Ajusta este valor según tus necesidades
+                                height: 200, // Ajusta este valor según tus necesidades
+                                child: buildWeeklyFrequency(data['dailyCounts']),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Text('Error: Data is null');
+                        }
+                      }
+                    },
+                  ),
+
+              ],
               ],
             ),
           ),
@@ -142,10 +186,10 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-//AQUI SE TRAEN LOS DATOS DE LOS SCANEOS
+//AQUI SE TRAEN LOS DATOS DE LOS SCANEOS DEL USUARIO NO ADMIN
 Future<Map<String, dynamic>> fetchScans(BuildContext context) async {
   final authModel = Provider.of<AuthModel>(context, listen: false);
-  final url = 'https://servidor-recycling-s4lb.onrender.com/api/scans';
+  final url = 'https://servidor-recycling-s4lb.onrender.com/api/scans?limit=500';
 
   final response = await http.get(
     Uri.parse(url),
@@ -196,8 +240,68 @@ Future<Map<String, dynamic>> fetchScans(BuildContext context) async {
       }
     }
 
-    print('Conteo de tipos de residuos: $counts');
-    print('Conteo de escaneos por día de la semana: $dailyCounts');
+    print('Conteo de tipos de residuos: -------------------------------------------------- $counts');
+    print('Conteo de escaneos por día de la semana: ------------------------------------------- $dailyCounts');
+
+    return {'counts': counts, 'dailyCounts': dailyCounts};
+  } else {
+    throw Exception('Error al obtener los datos de los escaneos');
+  }
+}
+// AQUI SE OBTIENEN LOS DATOS DEL ADMIN
+
+Future<Map<String, dynamic>> fetchScansAdmin(BuildContext context) async {
+  final authModel = Provider.of<AuthModel>(context, listen: false);
+  final url = 'https://servidor-recycling-s4lb.onrender.com/api/scans?limit=500';
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Authorization': 'JWT ${authModel.token}',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    List<dynamic> allScans = data['docs'];
+
+    Map<String, int> counts = {
+      'residuos_aprovechables': 0,
+      'residuos_organicos_aprovechables': 0,
+      'residuos_no_aprovechables': 0,
+    };
+
+    Map<String, int> dailyCounts = {
+      'Monday': 0,
+      'Tuesday': 0,
+      'Wednesday': 0,
+      'Thursday': 0,
+      'Friday': 0,
+      'Saturday': 0,
+      'Sunday': 0,
+    };
+
+    DateTime now = DateTime.now();
+    DateTime startOfWeek =
+    DateTime(now.year, now.month, now.day - now.weekday + 1);
+
+    for (var scan in allScans) {
+      String wasteType = scan['wasteType'];
+      if (counts.containsKey(wasteType)) {
+        counts[wasteType] = (counts[wasteType] ?? 0) + 1;
+      }
+
+      DateTime scanDate = DateTime.parse(scan['scanDate']);
+      if (scanDate.isAfter(startOfWeek)) {
+        String weekday = DateFormat('EEEE').format(scanDate);
+        if (dailyCounts.containsKey(weekday)) {
+          dailyCounts[weekday] = (dailyCounts[weekday] ?? 0) + 1;
+        }
+      }
+    }
+
+    print('Conteo de tipos de residuos: -------------------------------------------------- $counts');
+    print('Conteo de escaneos por día de la semana: ------------------------------------------- $dailyCounts');
 
     return {'counts': counts, 'dailyCounts': dailyCounts};
   } else {
